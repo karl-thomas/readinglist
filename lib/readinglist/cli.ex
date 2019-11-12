@@ -43,6 +43,7 @@ defmodule Readinglist.CLI do
   def parse(args) do
     options = [
       strict: [
+        query: :string,
         intitle: :string,
         inpublisher: :string,
         inauthor: :string,
@@ -54,7 +55,8 @@ defmodule Readinglist.CLI do
     ]
 
     case OptionParser.parse(args, options) do
-      {search_terms, [command], _} when command == "search" and length(search_terms) > 0 ->
+      {search_terms, [command], _}
+      when command == "search" and length(search_terms) > 0 ->
         {:search, search_terms}
 
       {_, [command], _} when command == "list" ->

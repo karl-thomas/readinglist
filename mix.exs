@@ -15,7 +15,8 @@ defmodule Readinglist.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      env: [books_endpoint: "https://www.googleapis.com/books/v1"]
     ]
   end
 
