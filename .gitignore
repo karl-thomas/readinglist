@@ -22,3 +22,6 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 readinglist-*.tar
 
+#ignore files created by vscode extensiton
+.elixir_ls
+
