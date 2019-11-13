@@ -1,4 +1,6 @@
 defmodule ListFormatter do
+  @defaults %{authors: ["N/A"], title: "N/A", publisher: "N/A"}
+
   @doc """
     When the data passed to print is a list, it attaches the index to the item via creating a tuple
   """
@@ -11,6 +13,10 @@ defmodule ListFormatter do
   def print({%{volumeInfo: info}, index}), do: print({info, index})
 
   def print({info, index}) do
+    IO.inspect(info[:authors], label: "authors")
+    IO.inspect(info[:publisher], label: "publish")
+    IO.inspect(index, label: "index")
+
     template_string(info, index)
     |> IO.puts()
   end
@@ -18,12 +24,17 @@ defmodule ListFormatter do
   @doc """
    Creates a string based on the book information passed to it
   """
-  def template_string(%{authors: authors, title: title, publisher: publisher}, index) do
+  def template_string(map, index) do
+    %{authors: authors, title: title, publisher: publisher} = merge_defaults(map)
     authors = Enum.join(authors, ", ")
 
     "\n- Item number: #{index} \n" <>
       "  Title: #{title}\n" <>
       "  Author(s): #{authors}\n" <>
       "  Publisher: #{publisher}\n"
+  end
+
+  defp merge_defaults(map) do
+    Map.merge(@defaults, map)
   end
 end

@@ -21,6 +21,12 @@ defmodule ListFormatterTest do
                @book[:publisher]
              ])
     end
+
+    test "applies defaults for when key book details are missing" do
+      template = ListFormatter.template_string(%{}, 1)
+
+      assert String.contains?(template, ["Author(s): N/A"])
+    end
   end
 
   describe "print_string/1" do
