@@ -25,3 +25,5 @@ readinglist-*.tar
 #ignore files created by vscode extensiton
 .elixir_ls
 
+.env
+

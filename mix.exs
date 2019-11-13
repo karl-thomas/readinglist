@@ -16,12 +16,17 @@ defmodule Readinglist.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      env: [books_endpoint: "https://www.googleapis.com/books/v1"]
+      env: [books_endpoint: "https://www.googleapis.com/books/v1/volumes/"]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    [{:mix_test_watch, "~> 1.0", only: :dev, runtime: false}]
+    [
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:httpoison, "~> 1.6"},
+      {:poison, "~> 3.1"},
+      {:bypass, "~> 1.0", only: :test}
+    ]
   end
 end
