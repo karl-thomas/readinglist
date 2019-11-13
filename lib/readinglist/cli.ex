@@ -73,12 +73,21 @@ defmodule Readinglist.CLI do
   @doc """
     Run a command or handle an error based on the input
   """
-  @spec execute_command({:list} | {:error, any} | {:search, any}) :: :ok
+  @spec execute_command({:list} | {:error, any} | {:search, [tuple()]}) :: :ok
   def execute_command(args) do
     case args do
-      {:search, _search_terms} -> IO.puts("implement search")
+      {:search, search_terms} -> preform_search(search_terms)
       {:list} -> IO.puts("implement list")
       {:error, _message} -> print_help_message()
+    end
+  end
+
+  def preform_search(args) do
+    args
+    |> BooksService.get()
+    |> case do
+      {:ok, items} -> ListFormatter.print(items)
+      {:error, message} -> IO.puts(message)
     end
   end
 
