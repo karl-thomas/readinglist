@@ -1,16 +1,36 @@
 defmodule BooksService do
   def get(args) do
-    _url = endpoint() <> create_query_string(args) <> get_query_params()
+    args
+    |> create_url
+    |> GoogleBooks.get()
+    |> response
   end
 
-  @doc """
-    Returns the endpoint for the books service saved in the application env
+  defp response({
+         :ok,
+         %HTTPoison.Response{status_code: 200, body: %{totalItems: total, items: items}}
+       })
+       when total > 0,
+       do: {:ok, items}
 
-    ## Example
-    iex> BooksService.endpoint()
-    "https://www.googleapis.com/books/v1"
+  defp response({:ok, %HTTPoison.Response{status_code: 200, body: %{totalItems: total}}})
+       when total == 0,
+       do: {:error, "No items found matching your search"}
+
+  defp response({:ok, %HTTPoison.Response{status_code: 404}}),
+    do: {:error, "No items found matching your search"}
+
+  defp response({_, _}),
+    do: {:error, "Something went wrong with the request, please try again"}
+
+  @doc """
+    takes in the Keyword list into a query parameter that google books api understands
+
+    ## Examples
+    iex> BooksService.create_url([inauthor: "keyes", query: "flowers"])
+    "?q=flowers+inauthor:keyes&maxResults=5&projection=lite"
   """
-  @spec endpoint :: String.t()
+  def create_url(args), do: "?" <> create_query_string(args) <> "&maxResults=5&projection=lite"
 
   @doc """
     Turns the Keyword list into a query parameter that google books api understands
@@ -26,20 +46,12 @@ defmodule BooksService do
     "q=+inauthor:keyes"
   """
   @spec create_query_string([tuple()]) :: {[any], any}
-  def create_query_string(map) do
-    query = map[:query]
+  def create_query_string(keywords) do
+    query = keywords[:query]
 
-    Keyword.delete(map, :query)
+    Keyword.delete(keywords, :query)
     |> Enum.reduce("q=#{query}", &accumulate_books_options/2)
   end
 
-  @doc """
-    Reads the books_endpoint from from the application env
-  """
-  def endpoint, do: Application.get_env(:readinglist, :books_endpoint)
-
   defp accumulate_books_options({key, value}, acc), do: "#{acc}+#{key}:#{value}"
-
-  defp get_query_params,
-    do: "&maxResults=5&projection=lite&key=" <> System.get_env("GOOGLE_API_KEY")
 end
