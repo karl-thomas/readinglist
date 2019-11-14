@@ -1,6 +1,11 @@
 defmodule GoogleBooks do
   use HTTPoison.Base
 
+  @moduledoc """
+    Wraps HTTPoison.base to send all request to google books api
+    Parses JSON responses into atom key maps
+  """
+
   def process_url(url) do
     endpoint() <> url
   end
