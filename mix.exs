@@ -18,7 +18,7 @@ defmodule Readinglist.MixProject do
       extra_applications: [:logger],
       env: [
         books_endpoint: "https://www.googleapis.com/books/v1/volumes/",
-        json_file: "data/reading_list.json"
+        json_file: "reading_list.json"
       ]
     ]
   end
