@@ -1,21 +1,57 @@
 # Readinglist
 
-**TODO: Add description**
+A command line utility to help you find books you are looking for and save them to a reading list.
+
+## Dependencies
+
+At the least requires the Erlang vm to run the `readinglist` file. 
+
+The script was developed using Elixir 1.9.4 and Erlang/OTP 22.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `readinglist` to your list of dependencies in `mix.exs`:
+Clone down the repository with git
 
-```elixir
-def deps do
-  [
-    {:readinglist, "~> 0.1.0"}
-  ]
-end
+```bash
+  git clone https://github.com/karl-thomas/readinglist.git
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/readinglist](https://hexdocs.pm/readinglist).
+If you are planning on working on it or runnign the tests, make sure you get the dependencies
 
+```bash
+ mix deps.get
+```
+
+## Usage
+
+You can use this utility by running the file './readinglist'
+
+### Search
+
+Uses the google books apit to find books.
+
+A basic query
+```
+./readinglist search --query="flowers" 
+```
+
+A query with a modifier.
+```
+./readinglist search --query="flowers" --inauthor=keyes
+```
+
+Or just the modifier
+
+```
+./readinglist search --inauthor=keyes
+```
+
+It will then prompt you from a list a five books, you can enter 1-5 and it will save that book to a file. 
+
+### List
+
+To list what is in you reading list file,
+
+```
+./readinglist list
+```
