@@ -1,4 +1,7 @@
 defmodule BooksService do
+  @doc """
+    Uses command line arguments and the google books api wrapper to search for books
+  """
   def get(args) do
     args
     |> create_url
@@ -53,5 +56,6 @@ defmodule BooksService do
     |> Enum.reduce("q=#{query}", &accumulate_books_options/2)
   end
 
+  # helper for aggregating the query string
   defp accumulate_books_options({key, value}, acc), do: "#{acc}+#{key}:#{value}"
 end
