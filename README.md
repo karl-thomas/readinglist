@@ -16,7 +16,7 @@ Clone down the repository with git
   git clone https://github.com/karl-thomas/readinglist.git
 ```
 
-If you are planning on working on it or runnign the tests, make sure you get the dependencies
+If you are planning on working on it or running the tests, make sure you get the dependencies
 
 ```bash
  mix deps.get
@@ -28,7 +28,7 @@ You can use this utility by running the file './readinglist'
 
 ### Search
 
-Uses the google books apit to find books.
+Uses the google books api to find books.
 
 A basic query
 ```
@@ -61,7 +61,7 @@ It will then prompt you from a list a five books, you can enter 1-5 and it will 
 
 ### List
 
-To list what is in you reading list file,
+To list what is in your reading list file
 
 ```
 ./readinglist list
