@@ -46,6 +46,17 @@ Or just the modifier
 ./readinglist search --inauthor=keyes
 ```
 
+All the Modifiers
+
+- `--intitle`: Returns results where the text following this keyword is found in the title.
+- `--inauthor`: Returns results where the text following this keyword is found in the author.
+- `--inpublisher`: Returns results where the text following this keyword is found in the publisher.
+- `--subject`: Returns results where the text following this keyword is listed in the category list of the volume.
+- `--isbn`: Returns results where the text following this keyword is the ISBN number.
+- `--lccn`: Returns results where the text following this keyword is the Library of Congress Control Number.
+- `--oclc`: Returns results where the text following this keyword is the Online Computer Library Center number.
+
+
 It will then prompt you from a list a five books, you can enter 1-5 and it will save that book to a file. 
 
 ### List
