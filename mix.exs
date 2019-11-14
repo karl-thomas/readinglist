@@ -16,7 +16,10 @@ defmodule Readinglist.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      env: [books_endpoint: "https://www.googleapis.com/books/v1/volumes/"]
+      env: [
+        books_endpoint: "https://www.googleapis.com/books/v1/volumes/",
+        json_file: "reading_list.json"
+      ]
     ]
   end
 
