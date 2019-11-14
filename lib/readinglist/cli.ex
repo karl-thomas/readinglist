@@ -155,6 +155,9 @@ defmodule Readinglist.CLI do
       iex> Readinglist.CLI.validate_selection("4", 3)
       :error
 
+      iex> Readinglist.CLI.validate_selection("0", 3)
+      :error
+
       iex> Readinglist.CLI.validate_selection("6", 40)
       :error
 
@@ -172,6 +175,7 @@ defmodule Readinglist.CLI do
         Integer.parse(string)
         |> case do
           {int, _} when int > 5 -> :error
+          {int, _} when int <= 0 -> :error
           {int, _} when int > list_length -> :error
           {int, _} -> int - 1
           :error -> :error
@@ -194,10 +198,10 @@ defmodule Readinglist.CLI do
 
     IO.puts("\n  Searching: ")
 
-    IO.puts("\n    $ [command to run script] search --inauthor=keyes")
-    IO.puts("\n    $ [command to run script] search --inpublisher=penguin --intitle=flowers")
+    IO.puts("\n    $ ./readinglist search --inauthor=keyes")
+    IO.puts("\n    $ ./readinglist search --inpublisher=penguin --intitle=flowers")
 
-    IO.puts("\n Listing \n    $ [command to run script] listing")
+    IO.puts("\n Listing \n    $ ./readinglist list")
   end
 
   defp leave do
