@@ -13,10 +13,6 @@ defmodule ListFormatter do
   def print({%{volumeInfo: info}, index}), do: print({info, index})
 
   def print({info, index}) do
-    IO.inspect(info[:authors], label: "authors")
-    IO.inspect(info[:publisher], label: "publish")
-    IO.inspect(index, label: "index")
-
     template_string(info, index)
     |> IO.puts()
   end
