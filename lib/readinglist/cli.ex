@@ -9,6 +9,7 @@ defmodule Readinglist.CLI do
   }
 
   @queries %{
+    "query" => "A search term that can be anything",
     "intitle" => "Returns results where the text following this keyword is found in the title.",
     "inpublisher" =>
       "Returns results where the text following this keyword is found in the author.",
@@ -76,27 +77,47 @@ defmodule Readinglist.CLI do
   @spec execute_command({:list} | {:error, any} | {:search, [tuple()]}) :: :ok
   def execute_command(args) do
     case args do
-      {:search, search_terms} -> preform_search(search_terms)
-      {:list} -> IO.puts("implement list")
-      {:error, _message} -> print_help_message()
+      {:search, search_terms} ->
+        search_terms
+        |> BooksService.get()
+        |> select_item()
+        |> Readinglist.add()
+
+      {:list} ->
+        Readinglist.get_items() |> ListFormatter.print()
+
+      {:error, _message} ->
+        print_help_message()
     end
   end
 
-  def preform_search(args) do
-    args
-    |> BooksService.get()
-    |> handle_search()
-  end
-
-  def handle_search({:ok, items}) do
+  @doc """
+    Prints the list, asks the user if they'd like to save a book, and returns the book they want to save
+  """
+  def select_item({:ok, items}) do
     ListFormatter.print(items)
-    |> get_item_selection()
-    |> select_item(items)
+
+    ensure_item_selected()
+    |> (&Enum.fetch!(items, &1)).()
   end
 
-  def handle_search({:error, message}), do: IO.puts(message)
+  def select_item({:error, message}), do: IO.puts(message)
 
-  def get_item_selection(_), do: get_item_selection()
+  @doc """
+    Keeps asking the user for input until the input is valid
+  """
+  def ensure_item_selected() do
+    output = get_item_selection()
+
+    if output == :error do
+      IO.puts("\n !!! Invalid Input!!!\n")
+      ensure_item_selected()
+    else
+      output
+    end
+  end
+
+  # def get_item_selection(_), do: get_item_selection()
 
   def get_item_selection do
     IO.puts("\n  Type in an item number and press enter to save that item to your reading list")
@@ -116,15 +137,6 @@ defmodule Readinglist.CLI do
           :error -> :error
         end
     end
-  end
-
-  def select_item(:error, _) do
-    IO.puts("\n  !!! Invalid Input !!!")
-    get_item_selection()
-  end
-
-  def select_item(index, items) do
-    Enum.fetch!(items, index)
   end
 
   defp print_help_message do
