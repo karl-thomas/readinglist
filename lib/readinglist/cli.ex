@@ -85,10 +85,46 @@ defmodule Readinglist.CLI do
   def preform_search(args) do
     args
     |> BooksService.get()
+    |> handle_search()
+  end
+
+  def handle_search({:ok, items}) do
+    ListFormatter.print(items)
+    |> get_item_selection()
+    |> select_item(items)
+  end
+
+  def handle_search({:error, message}), do: IO.puts(message)
+
+  def get_item_selection(_), do: get_item_selection()
+
+  def get_item_selection do
+    IO.puts("\n  Type in an item number and press enter to save that item to your reading list")
+    IO.puts("\n  Or just press enter to skip saving")
+
+    IO.gets("\n  What is your choice?: ")
+    |> String.trim()
     |> case do
-      {:ok, items} -> ListFormatter.print(items)
-      {:error, message} -> IO.puts(message)
+      "" ->
+        leave()
+
+      string ->
+        Integer.parse(string)
+        |> case do
+          {int, _} when int > 5 -> :error
+          {int, _} -> int - 1
+          :error -> :error
+        end
     end
+  end
+
+  def select_item(:error, _) do
+    IO.puts("\n  !!! Invalid Input !!!")
+    get_item_selection()
+  end
+
+  def select_item(index, items) do
+    Enum.fetch!(items, index)
   end
 
   defp print_help_message do
@@ -110,5 +146,10 @@ defmodule Readinglist.CLI do
     IO.puts("\n $ [command to run script] search --inpublisher=penguin --intitle=flowers")
 
     IO.puts("\n Listing \n $ [command to run script] listing")
+  end
+
+  defp leave do
+    IO.puts("Goodbye")
+    System.halt()
   end
 end
