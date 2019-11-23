@@ -29,11 +29,9 @@ defmodule BooksService do
   @doc """
     takes in the Keyword list into a query parameter that google books api understands
 
-    ## Examples
-    iex> BooksService.create_url([inauthor: "keyes", query: "flowers"])
-    "?q=flowers+inauthor:keyes&maxResults=5&projection=lite"
   """
-  def create_url(args), do: "?" <> create_query_string(args) <> "&maxResults=5&projection=lite"
+  def create_url(args),
+    do: "?#{create_query_string(args)}&maxResults=#{books_limit()}&projection=lite"
 
   @doc """
     Turns the Keyword list into a query parameter that google books api understands
@@ -56,6 +54,9 @@ defmodule BooksService do
     |> Enum.reduce("q=#{query}", &accumulate_books_options/2)
   end
 
-  # helper for aggregating the query string
+  # helper for reducing the query string
   defp accumulate_books_options({key, value}, acc), do: "#{acc}+#{key}:#{value}"
+
+  # get the books limit from app config
+  defp books_limit, do: Application.get_env(:readinglist, :books_limit)
 end
