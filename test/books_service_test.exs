@@ -11,15 +11,20 @@ defmodule BooksServiceTest do
   setup do
     bypass = Bypass.open()
     Application.put_env(:readinglist, :books_endpoint, "http://localhost:#{bypass.port}/")
+    Application.put_env(:readinglist, :books_limit, 10)
 
     {:ok, bypass: bypass}
   end
 
   describe "get/1" do
-    test "parses the query parameters properly and sends them with the request", %{bypass: bypass} do
+    test "parses the query parameters properly and sends them with the correct request", %{
+      bypass: bypass
+    } do
+      limit = Application.get_env(:readinglist, :books_limit)
+
       Bypass.expect(bypass, fn conn ->
         assert "GET" == conn.method
-        assert "q=+inauthor:keyes&maxResults=5&projection=lite" == conn.query_string
+        assert "q=+inauthor:keyes&maxResults=#{limit}&projection=lite" == conn.query_string
         Plug.Conn.resp(conn, 200, @get_response_json)
       end)
 
@@ -42,6 +47,21 @@ defmodule BooksServiceTest do
     test "when api finds no items, returns a message", %{bypass: bypass} do
       Bypass.expect(bypass, &Plug.Conn.resp(&1, 200, @no_items))
       assert {:error, "No items found matching your search"} = BooksService.get(inauthor: "keyes")
+    end
+  end
+
+  describe "create_url/1" do
+    test "should use app config to limit the correct amount of books" do
+      limit = Application.get_env(:readinglist, :books_limit)
+
+      assert "?q=flowers+inauthor:keyes&maxResults=#{limit}&projection=lite" ==
+               BooksService.create_url(inauthor: "keyes", query: "flowers")
+
+      Application.put_env(:readlinglist, :books_limit, 5)
+      limit2 = Application.get_env(:readinglist, :books_limit)
+
+      assert "?q=flowers+inauthor:keyes&maxResults=#{limit2}&projection=lite" ==
+               BooksService.create_url(inauthor: "keyes", query: "flowers")
     end
   end
 end

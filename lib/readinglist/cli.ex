@@ -136,7 +136,7 @@ defmodule Readinglist.CLI do
   @doc """
     Validates a string representing a count of items against the length of a list
     If input string is does not contain any characters or digits, return :leave
-    if input string is above 5, greater than the list, or does not contain a number return :error
+    if input string isgreater than the list length, or does not contain a number return :error
     if input string contains a valid number, return that number minus one representing the index
 
     ## Examples
@@ -158,9 +158,6 @@ defmodule Readinglist.CLI do
       iex> Readinglist.CLI.validate_selection("0", 3)
       :error
 
-      iex> Readinglist.CLI.validate_selection("6", 40)
-      :error
-
       iex> Readinglist.CLI.validate_selection("nope, not a number in sight", 40)
       :error
   """
@@ -174,7 +171,6 @@ defmodule Readinglist.CLI do
       string ->
         Integer.parse(string)
         |> case do
-          {int, _} when int > 5 -> :error
           {int, _} when int <= 0 -> :error
           {int, _} when int > list_length -> :error
           {int, _} -> int - 1
