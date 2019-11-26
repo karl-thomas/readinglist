@@ -66,9 +66,3 @@ To list what is in your reading list file
 ```
 ./readinglist list
 ```
-
-## Build script
-
-```
-mix escript.build
-```

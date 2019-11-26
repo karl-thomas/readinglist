@@ -28,6 +28,7 @@ defmodule Readinglist.MixProject do
   defp deps do
     [
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:httpoison, "~> 1.6"},
       {:poison, "~> 3.1"},
       {:bypass, "~> 1.0", only: :test}
