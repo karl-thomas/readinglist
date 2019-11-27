@@ -27,8 +27,7 @@ defmodule BooksService do
     do: {:error, "Something went wrong with the request, please try again"}
 
   @doc """
-    takes in the Keyword list into a query parameter that google books api understands
-
+    Takes in the Keyword list into a query parameter that google books api understands.
   """
   def create_url(args),
     do: "?#{create_query_string(args)}&maxResults=#{books_limit()}&projection=lite"
