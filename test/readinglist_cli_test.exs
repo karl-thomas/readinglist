@@ -2,6 +2,7 @@ defmodule ReadinglistCLITest do
   use ExUnit.Case
   doctest Readinglist.CLI
 
+  @books_limit 10
   @book %{
     authors: ["Karl", "Toms"],
     title: "Karls adventure",
@@ -14,69 +15,76 @@ defmodule ReadinglistCLITest do
     publisher: "Penguins"
   }
 
-  describe "get_item_selection/0" do
-    test "asks you for input to select an item" do
-      execute = fn ->
-        Readinglist.CLI.get_item_selection(5)
-      end
+  def set_limit(limit) do
+    Application.put_env(:readinglist, :books_limit, limit)
+  end
 
-      assert capture_io("1", execute) =~ "What is your choice?"
+  setup do
+    set_limit(@books_limit)
+  end
+
+  describe "get_item_selection/2" do
+    test "asks you for input to select an item" do
+      start_supervised(FakeIO)
+      FakeIO.set_response("1")
+
+      Readinglist.CLI.get_item_selection(5, FakeIO)
+      assert_received {:printing, "\n  What is your choice?: "}
+      assert FakeIO.gets_call_count() === 1
     end
 
-    test "outputs an error if input number is above 5" do
-      execute = fn ->
-        assert :error == Readinglist.CLI.get_item_selection(5)
-      end
+    test "outputs an error if input number is above the apps book limit" do
+      start_supervised(FakeIO)
+      FakeIO.set_response("20")
 
-      capture_io([input: "40\n"], execute)
+      assert :error == Readinglist.CLI.get_item_selection(5, FakeIO)
     end
 
     test "outputs an error if input does not contain a number" do
-      execute = fn ->
-        assert :error == Readinglist.CLI.get_item_selection(5)
-      end
+      start_supervised(FakeIO)
+      FakeIO.set_response("no numbers here")
 
-      capture_io([input: "no numbers here\n"], execute)
+      assert :error == Readinglist.CLI.get_item_selection(5, FakeIO)
+    end
+
+    test "outputs an error if input is greater than the length passed to the function" do
+      start_supervised(FakeIO)
+      FakeIO.set_response("7")
+
+      assert :error == Readinglist.CLI.get_item_selection(5, FakeIO)
     end
 
     test "on valid input, returns the number the user inputs minus 1" do
-      execute = fn ->
-        assert 0 == Readinglist.CLI.get_item_selection(5)
-      end
+      start_supervised(FakeIO)
+      FakeIO.set_response("2")
 
-      capture_io([input: "1"], execute)
+      assert 1 == Readinglist.CLI.get_item_selection(5, FakeIO)
     end
   end
 
   describe "ensure_item_selected/0" do
     test "returns the output of get_item_selected/0 if valid" do
-      execute = fn ->
-        assert 0 == Readinglist.CLI.ensure_item_selected(5)
-      end
-
-      capture_io([input: "1"], execute)
+      start_supervised(FakeIO)
+      FakeIO.set_response("1")
+      assert 0 == Readinglist.CLI.ensure_item_selected(5, FakeIO)
     end
   end
 
   describe "select_item/1" do
     test "returns the item from the list the user wants" do
+      start_supervised(FakeIO)
+      FakeIO.set_response("1")
+
       list = [@book, @second_book]
 
-      execute = fn ->
-        assert @book == Readinglist.CLI.select_item({:ok, list})
-      end
-
-      capture_io("1", execute)
+      assert @book == Readinglist.CLI.select_item({:ok, list}, FakeIO)
     end
 
-    test "on recieving an error it out puts the error message" do
+    test "on recieving an error it IO.puts/1 the error message" do
       message = "Problem!"
 
-      execute = fn ->
-        Readinglist.CLI.select_item({:error, message})
-      end
-
-      assert capture_io(execute) =~ message
+      Readinglist.CLI.select_item({:error, message}, FakeIO)
+      assert_received({:printing, message})
     end
   end
 end
