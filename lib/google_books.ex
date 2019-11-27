@@ -6,16 +6,19 @@ defmodule GoogleBooks do
     Parses JSON responses into atom key maps
   """
 
+  @doc """
+    prepends the endpoint to a URI encoded version of the string passed to it
+  """
   def process_url(url) do
-    endpoint() <> url
+    endpoint() <> URI.encode(url)
   end
 
   @doc """
     converts the body of the response into maps, with atoms for keys
 
     ## Examples
-    iex> GoogleBooks.process_response_body("{\\"items\\":[{\\"title\\":\\"Karl\\"}]}")
-    %{items: [%{title: "Karl"}]}
+      iex> GoogleBooks.process_response_body("{\\"items\\":[{\\"title\\":\\"Karl\\"}]}")
+      %{items: [%{title: "Karl"}]}
   """
   def process_response_body(body) do
     body

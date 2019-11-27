@@ -48,6 +48,12 @@ defmodule BooksServiceTest do
       Bypass.expect(bypass, &Plug.Conn.resp(&1, 200, @no_items))
       assert {:error, "No items found matching your search"} = BooksService.get(inauthor: "keyes")
     end
+
+    test "when passed search params with special character, should work", %{bypass: bypass} do
+      Bypass.expect(bypass, &Plug.Conn.resp(&1, 200, @get_response_json))
+
+      assert {:ok, [@item_atom_key]} = BooksService.get(intitle: "@keyes & karl! #   ")
+    end
   end
 
   describe "create_url/1" do
