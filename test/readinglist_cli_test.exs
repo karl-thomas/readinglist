@@ -1,7 +1,6 @@
 defmodule ReadinglistCLITest do
   use ExUnit.Case
   doctest Readinglist.CLI
-  import ExUnit.CaptureIO
 
   @book %{
     authors: ["Karl", "Toms"],
