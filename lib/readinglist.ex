@@ -7,7 +7,7 @@ defmodule Readinglist do
 
   # calls add/1 with the contents of volumeInfo for use with googl books api
   @spec add(Book.t() | GoogleBook.t()) :: :ok | {:error, atom}
-  def add(%GoogleBook{volumeInfo: info}), do: add(info)
+  def add(%{volumeInfo: info}), do: add(info)
 
   @doc """
     Adds a book to the items array of a json file
