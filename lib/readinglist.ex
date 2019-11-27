@@ -6,7 +6,8 @@ defmodule Readinglist do
   @default_content Poison.encode!(%{items: []})
 
   # calls add/1 with the contents of volumeInfo for use with googl books api
-  def add(%{volumeInfo: info}), do: add(info)
+  @spec add(Book.t() | GoogleBook.t()) :: :ok | {:error, atom}
+  def add(%GoogleBook{volumeInfo: info}), do: add(info)
 
   @doc """
     Adds a book to the items array of a json file
@@ -15,10 +16,10 @@ defmodule Readinglist do
     new_list =
       get_items()
       |> Enum.concat([
-        %{
-          authors: item[:authors] || "N/A",
-          title: item[:title] || "N/A",
-          publisher: item[:publisher] || "N/A"
+        %Book{
+          authors: item.authors || "N/A",
+          title: item.title || "N/A",
+          publisher: item.publisher || "N/A"
         }
       ])
 

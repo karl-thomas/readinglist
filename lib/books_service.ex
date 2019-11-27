@@ -2,6 +2,7 @@ defmodule BooksService do
   @doc """
     Uses command line arguments and the google books api wrapper to search for books
   """
+  @spec get([tuple()]) :: {:ok | :error, any}
   def get(args) do
     args
     |> create_url
@@ -45,7 +46,7 @@ defmodule BooksService do
     iex> BooksService.create_query_string([inauthor: "keyes"])
     "q=+inauthor:keyes"
   """
-  @spec create_query_string([tuple()]) :: {[any], any}
+  @spec create_query_string([tuple()]) :: String.t()
   def create_query_string(keywords) do
     query = keywords[:query]
 

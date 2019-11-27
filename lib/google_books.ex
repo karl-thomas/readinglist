@@ -28,5 +28,6 @@ defmodule GoogleBooks do
   @doc """
     Reads the books_endpoint from from the application env
   """
+  @spec endpoint :: String.t()
   def endpoint, do: Application.get_env(:readinglist, :books_endpoint)
 end

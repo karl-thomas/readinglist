@@ -2,6 +2,7 @@ defmodule ListFormatter do
   @defaults %{authors: ["N/A"], title: "N/A", publisher: "N/A"}
 
   # setting defaults in header style function
+  @spec print(list(Book.t()) | {Book.t(), integer} | {GoogleBook.t(), integer}, any) :: any
   def print(data, io \\ IO)
 
   @doc """
@@ -23,6 +24,7 @@ defmodule ListFormatter do
   @doc """
    Creates a string based on the book information passed to it
   """
+  @spec template_string(Book.t(), integer) :: String.t()
   def template_string(map, index) do
     %{authors: authors, title: title, publisher: publisher} = merge_defaults(map)
     authors = Enum.join(authors, ", ")
