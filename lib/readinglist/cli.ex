@@ -94,24 +94,29 @@ defmodule Readinglist.CLI do
   @doc """
     Prints the list, asks the user if they'd like to save a book, and returns the book they want to save
   """
-  def select_item({:ok, items}) do
-    ListFormatter.print(items)
+  @spec select_item({:error, String.t()}, any) :: :ok
+  @spec select_item({:ok, list(Book.t())}, any) :: Book.t()
+  def select_item(input, io \\ IO)
+
+  def select_item({:ok, items}, io) do
+    ListFormatter.print(items, io)
 
     length(items)
-    |> ensure_item_selected()
+    |> ensure_item_selected(io)
     |> (&Enum.fetch!(items, &1)).()
   end
 
-  def select_item({:error, message}), do: IO.puts(message)
+  def select_item({:error, message}, io), do: io.puts(message)
 
   @doc """
     Keeps asking the user for input until the input is valid
   """
-  def ensure_item_selected(length) do
-    output = get_item_selection(length)
+  @spec ensure_item_selected(integer, any) :: integer
+  def ensure_item_selected(length, io \\ IO) do
+    output = get_item_selection(length, io)
 
     if output == :error do
-      IO.puts("\n !!! Invalid Input!!!\n")
+      io.puts("\n !!! Invalid Input!!!\n")
       ensure_item_selected(length)
     else
       output
@@ -121,11 +126,12 @@ defmodule Readinglist.CLI do
   @doc """
     Asks the user for input and validates that input against an integer passed to it
   """
-  def get_item_selection(length) do
-    IO.puts("\n  Type in an item number and press enter to save that item to your reading list")
-    IO.puts("\n  Or just press enter to skip saving")
+  @spec get_item_selection(integer, any) :: integer | :error
+  def get_item_selection(length, io \\ IO) do
+    io.puts("\n  Type in an item number and press enter to save that item to your reading list")
+    io.puts("\n  Or just press enter to skip saving")
 
-    IO.gets("\n  What is your choice?: ")
+    io.gets("\n  What is your choice?: ")
     |> validate_selection(length)
     |> case do
       :leave -> leave()
@@ -161,6 +167,7 @@ defmodule Readinglist.CLI do
       iex> Readinglist.CLI.validate_selection("nope, not a number in sight", 40)
       :error
   """
+  @spec ensure_item_selected(String.t(), integer) :: integer
   def validate_selection(string, list_length) do
     string
     |> String.trim()
@@ -179,28 +186,28 @@ defmodule Readinglist.CLI do
     end
   end
 
-  defp print_help_message do
-    IO.puts("\n  This program supports following commands:\n")
+  defp print_help_message(io \\ IO) do
+    io.puts("\n  This program supports following commands:\n")
 
     @commands
-    |> Enum.map(fn {command, description} -> IO.puts("  #{command} - #{description} \n") end)
+    |> Enum.map(fn {command, description} -> io.puts("  #{command} - #{description} \n") end)
 
-    IO.puts("\n  The search command must have one of the following parameters")
+    io.puts("\n  The search command must have one of the following parameters")
 
     @queries
-    |> Enum.map(fn {query, description} -> IO.puts("  #{query} - #{description} \n") end)
+    |> Enum.map(fn {query, description} -> io.puts("  #{query} - #{description} \n") end)
 
-    IO.puts("\n  Examples:")
+    io.puts("\n  Examples:")
 
-    IO.puts("\n  Searching: ")
+    io.puts("\n  Searching: ")
 
-    IO.puts("\n    $ ./readinglist search --inauthor=keyes")
-    IO.puts("\n    $ ./readinglist search --inpublisher=penguin --intitle=flowers")
+    io.puts("\n    $ ./readinglist search --inauthor=keyes")
+    io.puts("\n    $ ./readinglist search --inpublisher=penguin --intitle=flowers")
 
-    IO.puts("\n Listing \n    $ ./readinglist list")
+    io.pusts("\n Listing \n    $ ./readinglist list")
   end
 
-  defp leave do
+  defp leave() do
     IO.puts("\n  Goodbye")
     System.halt()
   end

@@ -1,6 +1,5 @@
 defmodule ListFormatterTest do
   use ExUnit.Case
-  import ExUnit.CaptureIO
   doctest ListFormatter
 
   @book %{
@@ -31,19 +30,15 @@ defmodule ListFormatterTest do
 
   describe "print/1" do
     test "prints out information for a book from google passed to it" do
-      execute = fn ->
-        ListFormatter.print([@book_from_google])
-      end
-
-      assert capture_io(execute) =~ "Title: #{@book[:title]}"
+      ListFormatter.print([@book_from_google], FakeIO)
+      string = ListFormatter.template_string(@book, 1)
+      assert_received({:printing, ^string})
     end
 
     test "prints out information for a book passed to it" do
-      execute = fn ->
-        ListFormatter.print([@book])
-      end
-
-      assert capture_io(execute) =~ "Title: #{@book[:title]}"
+      ListFormatter.print([@book], FakeIO)
+      string = ListFormatter.template_string(@book, 1)
+      assert_received({:printing, ^string})
     end
   end
 end
